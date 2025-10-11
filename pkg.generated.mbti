@@ -2,16 +2,19 @@
 package "FlyCloudC/GJK"
 
 // Values
+fn[A : ConvexShape, B : ConvexShape] intersecting(A, B, iter_step? : Int) -> Bool
 
 // Errors
 
 // Types and methods
-pub(all) enum BasicShape {
-  Circle(Vec2, Double)
-  Polygon(FixedArray[Vec2])
-}
-#as_free_fn
-fn BasicShape::intersecting(Self, Self, iter_step? : Int) -> Bool
+pub(all) struct Circle(Vec2, Double)
+
+impl ConvexShape for Circle
+
+pub(all) struct Polygon(FixedArray[Vec2])
+#deprecated
+fn Polygon::inner(Self) -> FixedArray[Vec2]
+impl ConvexShape for Polygon
 
 pub(all) struct Vec2(Double, Double)
 
@@ -19,4 +22,7 @@ pub(all) struct Vec2(Double, Double)
 // Type aliases
 
 // Traits
+pub(open) trait ConvexShape {
+  far(Self, Vec2) -> Vec2
+}
 

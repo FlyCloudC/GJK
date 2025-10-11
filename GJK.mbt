@@ -1,4 +1,22 @@
 ///|
+/// A trait for convex geometric shapes that can compute their support point in
+/// a given direction.
+///
+/// The support point is the point on the shape that is furthest in the
+/// specified direction. This is a fundamental operation used in collision
+/// detection algorithms like GJK (Gilbert-Johnson-Keerthi) and EPA (Expanding
+/// Polytope Algorithm).
+///
+/// Methods:
+///
+/// * `far(Self, Vec2) -> Vec2`: Returns the support point of the shape in the
+///   given direction.
+///
+pub(open) trait ConvexShape {
+  far(Self, Vec2) -> Vec2
+}
+
+///|
 const EPS : Double = 1.0e-10
 
 ///|
@@ -7,20 +25,19 @@ const EPS : Double = 1.0e-10
 ///
 /// Parameters:
 ///
-/// * `self` : The first shape to test for intersection.
-/// * `other` : The second shape to test for intersection.
+/// * `s1` : The first shape to test for intersection.
+/// * `s2` : The second shape to test for intersection.
 /// * `iter_step` : The maximum number of iterations to perform (default: 100).
 ///   Higher values provide more accuracy but may impact performance.
 ///
 /// Returns `true` if the shapes are intersecting, `false` otherwise.
-#as_free_fn
-pub fn Shape::intersecting(
-  self : Shape,
-  other : Shape,
+pub fn[A : ConvexShape, B : ConvexShape] intersecting(
+  s1 : A,
+  s2 : B,
   iter_step? : Int = 100,
 ) -> Bool {
-  let a = self.far(Vec2(1, 0)) - other.far(Vec2(-1, 0))
-  let b = self.far(-a) - other.far(a)
+  let a = s1.far(Vec2(1, 0)) - s2.far(Vec2(-1, 0))
+  let b = s1.far(-a) - s2.far(a)
   if b.dot(a) > 0 {
     return false
   }
@@ -29,7 +46,7 @@ pub fn Shape::intersecting(
     Vec2::triple_prod(ba, bo, ba)
   }
   for i = iter_step, l = a, r = b, dt = ba_perp; i > 0; {
-    let t = self.far(dt) - other.far(-dt)
+    let t = s1.far(dt) - s2.far(-dt)
     let (tr, tl) = (r - t, l - t)
     let tr_perp = Vec2::triple_prod(tl, tr, tr)
     if tr_perp.dot(t) < EPS {
@@ -48,9 +65,9 @@ pub fn Shape::intersecting(
 ///|
 test "polygon polygon" {
   let sq1 = Polygon([Vec2(0, 0), Vec2(0, 1), Vec2(1, 1), Vec2(1, 0)])
-  let s12 = sq1.add(Vec2(1, 1))
+  let s12 = Polygon([Vec2(1, 1), Vec2(1, 2), Vec2(2, 2), Vec2(2, 1)])
   let t1 = Polygon([Vec2(0, 0), Vec2(2, 0), Vec2(1, 2)])
-  let t2 = t1.add(Vec2(1, 1))
+  let t2 = Polygon([Vec2(1, 1), Vec2(3, 1), Vec2(2, 3)])
   //
   assert_true(intersecting(t1, s12))
   assert_true(intersecting(s12, t1))

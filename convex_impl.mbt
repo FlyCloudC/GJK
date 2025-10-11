@@ -1,27 +1,26 @@
 ///|
-pub(all) enum Shape {
-  Circle(Vec2, Double)
-  Polygon(FixedArray[Vec2])
+pub(all) struct Circle(Vec2, Double)
+
+///|
+pub impl ConvexShape for Circle with far(self, dir) {
+  let Circle(c, r) = self
+  c + dir.normal_then_mul(r)
 }
 
 ///|
-fn far(self : Shape, dir : Vec2) -> Vec2 {
-  match self {
-    Circle(c, r) => c + dir.normal_then_mul(r)
-    Polygon(ps) => ps.max_by(dir.dot(_))
-  }
+/// Note: The FixedArray must not be empty.
+pub(all) struct Polygon(FixedArray[Vec2])
+
+///|
+pub impl ConvexShape for Polygon with far(self, dir) {
+  self.0.unsafe_max_by(dir.dot(_))
 }
 
 ///|
-fn add(self : Shape, v : Vec2) -> Shape {
-  match self {
-    Circle(c, r) => Circle(c + v, r)
-    Polygon(ps) => Polygon(ps.map(_.add(v)))
-  }
-}
-
-///|
-fn[A, B : Compare] FixedArray::max_by(self : FixedArray[A], f : (A) -> B) -> A {
+fn[A, B : Compare] FixedArray::unsafe_max_by(
+  self : FixedArray[A],
+  f : (A) -> B,
+) -> A {
   guard self.length() > 0
   let a0 = self.unsafe_get(0)
   loop (a0, f(a0), self.length() - 1) {
@@ -37,7 +36,7 @@ fn[A, B : Compare] FixedArray::max_by(self : FixedArray[A], f : (A) -> B) -> A {
 ///|
 test "circle far" {
   let s1 = Circle(Vec2(0, 0), 5)
-  let s2 = s1.add(Vec2(-1, -1))
+  let s2 = Circle(Vec2(-1, -1), 5)
   let d1 = Vec2(3, 4)
   let d2 = Vec2(1, 0)
   inspect(s1.far(d1), content="(3, 4)")
@@ -50,7 +49,7 @@ test "circle far" {
 test "polygon far" {
   let s1 = Polygon([Vec2(0, 0), Vec2(0, 1), Vec2(1, 0), Vec2(1, 1)])
   let s2 = Polygon([Vec2(0, 0), Vec2(0, 1), Vec2(1, 0)])
-  let s3 = s1.add(Vec2(1, 1))
+  let s3 = Polygon([Vec2(1, 1), Vec2(1, 2), Vec2(2, 1), Vec2(2, 2)])
   let d1 = Vec2(5, -1)
   let d2 = Vec2(1, 5)
   inspect(s1.far(d1), content="(1, 0)")
