@@ -1,0 +1,22 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "FlyCloudC/GJK"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum BasicShape {
+  Circle(Vec2, Double)
+  Polygon(FixedArray[Vec2])
+}
+#as_free_fn
+fn BasicShape::intersecting(Self, Self, iter_step? : Int) -> Bool
+
+pub(all) struct Vec2(Double, Double)
+
+
+// Type aliases
+
+// Traits
+

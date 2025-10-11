@@ -1,0 +1,12 @@
+{
+  "name": "FlyCloudC/GJK",
+  "version": "0.1.0",
+  "readme": "README.mbt.md",
+  "repository": "https://github.com/FlyCloudC/GJK",
+  "license": "Apache-2.0",
+  "keywords": [
+    "collision detection",
+    "geometry"
+  ],
+  "description": "GJK (Gilbert–Johnson–Keerthi) collision detection algorithm"
+}
