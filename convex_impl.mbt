@@ -21,14 +21,18 @@ fn[A, B : Compare] FixedArray::unsafe_max_by(
   self : FixedArray[A],
   f : (A) -> B,
 ) -> A {
-  guard self.length() > 0
-  let a0 = self.unsafe_get(0)
-  loop (a0, f(a0), self.length() - 1) {
-    (am, _, 0) => am
-    (am, bm, i) => {
-      let ai = self.unsafe_get(i)
-      let bi = f(ai)
-      continue if bi > bm { (ai, bi, i - 1) } else { (am, bm, i - 1) }
+  guard self is [a0, .. rest]
+  for am = a0, bm = f(a0), rest = rest {
+    match rest {
+      [] => break am
+      [ai, .. rest] => {
+        let bi = f(ai)
+        if bi > bm {
+          continue ai, bi, rest
+        } else {
+          continue am, bm, rest
+        }
+      }
     }
   }
 }
