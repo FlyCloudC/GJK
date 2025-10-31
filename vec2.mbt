@@ -22,17 +22,17 @@ impl Neg for Vec2 with neg(a) {
 }
 
 ///|
-fn dot(self : Vec2, other : Vec2) -> Double {
+fn Vec2::dot(self : Vec2, other : Vec2) -> Double {
   self.0 * other.0 + self.1 * other.1
 }
 
 ///|
-fn length2(self : Vec2) -> Double {
+fn Vec2::length2(self : Vec2) -> Double {
   self.0 * self.0 + self.1 * self.1
 }
 
 ///|
-fn normal_then_mul(self : Vec2, new_len : Double) -> Vec2 {
+fn Vec2::normal_then_mul(self : Vec2, new_len : Double) -> Vec2 {
   let len2 = self.length2()
   if len2 == 0.0 {
     Vec2(new_len, 0)
