@@ -73,11 +73,11 @@ test "polygon polygon" {
   assert_true(intersecting(s12, t1))
   assert_true(intersecting(t1, t2))
   assert_true(intersecting(t2, t1))
+  assert_true(intersecting(sq1, t1))
+  assert_true(intersecting(t1, sq1))
   //
   assert_false(intersecting(sq1, s12))
   assert_false(intersecting(s12, sq1))
-  assert_false(intersecting(sq1, t1))
-  assert_false(intersecting(t1, sq1))
   assert_false(intersecting(sq1, t2))
   assert_false(intersecting(t2, sq1))
 }
